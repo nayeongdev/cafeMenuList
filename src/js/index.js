@@ -7,12 +7,22 @@
 // - [v] 메뉴가 추가되고 나면, input은 빈 값으로 초기화한다.
 // - [v] 사용자 입력값이 빈 값이라면 추가되지 않는다.
 
+// TODO 메뉴 수정
+// - [v] 메뉴의 수정 버튼을 누르면 메뉴 이름을 수정하는 모달창이 뜬다.
+//   (수정시, 브라우저에서 제공하는 `prompt` 인터페이스를 활용한다.)
+// - [v] 모달창에서 새로운 메뉴명을 입력 받고, 확인버튼을 누르면 메뉴 수정
+
 const $ = (selector) => document.querySelector(selector);
 
 function App() {
-  // form태그는 웹서버에 무언가를 전송하기위해 사용된다.
-  // enter키를 눌렀을 때 자동으로 전송하는 동작을 크롬이 제공해서 웹페이지가 새로고침된다.
-  // form태그가 자동으로 전송되는걸 막아준다. (ENTER키를 눌렀을 때 새로고침 되는걸 막아준다.)
+  $("#espresso-menu-list").addEventListener("click", (e) => {
+    if (e.target.classList.contains("menu-edit-button")) {
+      const $menuName = e.target.closest('li').querySelector('.menu-name');
+      const updatedMenuName = prompt("메뉴 이름을 수정하세요", $menuName.innerText);
+      $menuName.innerText = updatedMenuName;
+    }
+  });
+
   $("#espresso-menu-form").addEventListener("submit", (e) => {
     e.preventDefault();
   });
@@ -65,11 +75,6 @@ function App() {
 }
 
 App();
-
-// TODO 메뉴 수정
-// - [] 메뉴의 수정 버튼을 누르면 메뉴 이름을 수정하는 모달창이 뜬다.
-//   (수정시, 브라우저에서 제공하는 `prompt` 인터페이스를 활용한다.)
-// - [] 모달창에서 새로운 메뉴명을 입력 받고, 확인버튼을 누르면 메뉴 수정
 
 // TODO 메뉴 삭제
 // - [] 메뉴 삭제 버튼을 누르면, 메뉴 삭제 컨펌 모달창이 뜬다.
