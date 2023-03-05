@@ -1,26 +1,39 @@
-// step1 요구사항 - 돔 조작과 이벤트 핸들링으로 메뉴 관리하기
-// TODO 메뉴 추가
-// - [v] 메뉴의 이름을 입력 받고 엔터키를 누르면 메뉴 추가
-// - [v] 메뉴의 이름을 입력 받고 확인 버튼을 누르면 메뉴 추가
-// - [v] 추가되는 메뉴의 아래 마크업은 `<ul id="espresso-menu-list" class="mt-3 pl-0"></ul>` 안에 삽입해야 한다.
-// - [v] 총 메뉴 갯수를 count하여 상단에 보여준다.
-// - [v] 메뉴가 추가되고 나면, input은 빈 값으로 초기화한다.
-// - [v] 사용자 입력값이 빈 값이라면 추가되지 않는다.
+// TODO localStorage read & write
+// - [] localStorage에 데이터를 저장한다.
+//  - [v] 메뉴가 추가됐을 때
+//  - [] 메뉴가 수정됐을 때
+//  - [] 메뉴가 삭제됐을 때
+// - [] localStorage에 데이터를 읽어온다.
 
-// TODO 메뉴 수정
-// - [v] 메뉴의 수정 버튼을 누르면 메뉴 이름을 수정하는 모달창이 뜬다.
-//   (수정시, 브라우저에서 제공하는 `prompt` 인터페이스를 활용한다.)
-// - [v] 모달창에서 새로운 메뉴명을 입력 받고, 확인버튼을 누르면 메뉴 수정
+// TODO 카테고리별 메뉴판 관리
+//  -[] 에스프레소, 프라푸치노, 블렌디드, 티바나, 디저트 각각의 종류별로 메뉴판 관리
 
-// TODO 메뉴 삭제
-// - [v] 메뉴 삭제 버튼을 누르면, 메뉴 삭제 컨펌 모달창이 뜬다.
-//   (삭제시, 브라우저에서 제공하는 `confirm` 인터페이스를 활용한다.)
-// - [v] 확인 버튼을 누르면 메뉴 삭제
-// - [v] 총 메뉴 갯수를 count하여 상단에 보여준다.
+// TODO 페이지 접근 시 데이터 Read & Rendering
+// - [] 페이지에 최초로 접근할 때, 에스프레소 메뉴를 읽어온다.
+// - [] 에스프레소 메뉴를 페이지에 그려준다.
+
+// TODO 품절 상태 메뉴의 마크업
+// - [] 품절 상태인 경우를 보여줄 수 있게, 품절 버튼을 추가하고`sold-out` class를 추가하여 상태를 변경한다.
+// - [] 품절 버튼을 추가한다.
+// - [] 품절 버튼을 클릭하면 localStorage의 상태값이 변경된다.
+// - [] 버튼 이벤트가 발생한 li태그에 `sold-out` class를 추가하여 상태를 변경한다.
+
 
 const $ = (selector) => document.querySelector(selector);
 
+const store = {
+  setLocalStorage(menu) {
+    localStorage.setItem("menu", JSON.stringify(menu));
+  },
+  getLocalStorage() {
+    localStorage.getItem("menu");
+  }
+};
+
 function App() {
+  // 상태는 변하는 데이터, 이 앱에서 관리해야 하는 것은 무엇인가 - 메뉴명
+  this.menu = [];   // 메뉴가 여러개니까 배열로 초기화
+
   const updateMenuCount = () => {
     const menuCount = $("#espresso-menu-list").querySelectorAll("li").length;
     $(".menu-count").innerText = `총 ${menuCount}개`;
@@ -33,11 +46,13 @@ function App() {
       alert("메뉴를 입력하세요.");
       return;
     }
+    this.menu.push({ name: espressoMenuName });
+    store.setLocalStorage(this.menu);
 
-    const menuItemTemplate = (espressoMenuName) => {
+    const template = this.menu.map((item) => {
       return `
           <li class="menu-list-item d-flex items-center py-2">
-            <span class="w-100 pl-2 menu-name">${espressoMenuName}</span>
+            <span class="w-100 pl-2 menu-name">${item.name}</span>
             <button
               type="button"
               class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button"
@@ -51,11 +66,9 @@ function App() {
               삭제
             </button>
           </li>`;
-    };
-    $("#espresso-menu-list").insertAdjacentHTML(
-      'beforeend',
-      menuItemTemplate(espressoMenuName)
-    );
+    }).join("");
+
+    $("#espresso-menu-list").innerHTML = template;
     updateMenuCount();
     $("#espresso-menu-name").value = "";
   }
@@ -96,8 +109,8 @@ function App() {
     if (e.key !== "Enter") {
       return;
     }
-    addMenuName(); 
+    addMenuName();
   });
 }
 
-App();
+const app = new App();
