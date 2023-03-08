@@ -84,8 +84,11 @@ function App() {
     }
   }
 
-  const deleteMenuName = (e) => {
+  const removeMenuName = (e) => {
     if (confirm("메뉴를 삭제하시겠습니까?")) {
+      const menuId = e.target.closest("li").dataset.menuID;
+      this.menu.splice(menuId, 1)
+      store.setLocalStorage(this.menu);
       e.target.closest('li').remove();
       updateMenuCount();
     }
@@ -97,7 +100,7 @@ function App() {
     }
 
     if (e.target.classList.contains("menu-remove-button")) {
-      deleteMenuName(e);
+      removeMenuName(e);
     }
   });
 
