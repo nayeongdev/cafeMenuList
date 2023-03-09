@@ -137,8 +137,12 @@ function App() {
     const isCategroyButton = e.target.classList.contains("cafe-category-name");
     if (isCategroyButton) {
       const categoryName = e.target.dataset.categoryName;
+      const categoryBtnName = e.target.innerText.substr(2).trim();
+      
       this.currentCategory = categoryName;
       $("#category-title").innerText = `${e.target.innerText} 메뉴 관리`;
+      $("label[for='menu-name']").innerText = `${categoryBtnName} 메뉴 이름`;
+      $("#menu-name").placeholder = `${categoryBtnName} 메뉴 이름`;
       render();
     }
   });
