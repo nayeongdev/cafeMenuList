@@ -32,16 +32,23 @@ const store = {
 
 function App() {
   // 상태는 변하는 데이터, 이 앱에서 관리해야 하는 것은 무엇인가 - 메뉴명
-  this.menu = [];   // 메뉴가 여러개니까 배열로 초기화
+  this.menu = {
+    espresso: [],
+    frappuccino: [],
+    blended: [],
+    teavana: [],
+    desert: [],
+  };
+  this.currentCategory = 'espresso';
   this.init = () => {
-    if (store.getLocalStorage().length > 1) {
+    if (store.getLocalStorage()) {
       this.menu = store.getLocalStorage();
-      render();
     }
+    render();
   }
 
   const render = () => {
-    const template = this.menu.map((item, index) => {
+    const template = this.menu[this.currentCategory].map((item, index) => {
       return `
           <li data-menu-id="${index}" class="menu-list-item d-flex items-center py-2">
             <span class="w-100 pl-2 menu-name">${item.name}</span>
@@ -75,7 +82,7 @@ function App() {
       alert("메뉴를 입력하세요.");
       return;
     }
-    this.menu.push({ name: espressoMenuName });
+    this.menu[this.currentCategory].push({ name: espressoMenuName });
     store.setLocalStorage(this.menu);
     render();
     $("#espresso-menu-name").value = "";
@@ -124,6 +131,14 @@ function App() {
       return;
     }
     addMenuName();
+  });
+
+  $("nav").addEventListener("click", (e) => {
+    const isCategroyButton = e.target.classList.contains("cafe-category-name");
+    if (isCategroyButton) {
+      const categoryName = e.target.dataset.categoryName;
+      this.currentCategory = categoryName;
+    }
   });
 }
 
