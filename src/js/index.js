@@ -2,23 +2,23 @@ import { $ } from "./utils/dom.js";
 import store from "./store/index.js";
 
 // TODO 서버 요청
-// - 웹 서버를 띄운다.
-// - 서버에 새로운 메뉴명을 추가될 수 있도록 요청한다.
-// - 서버에 카테고리별 메뉴리스트를 요청한다.
-// - 서버에 메뉴명을 수정할 수 있도록 요청한다.
-// - 서버에 품절상태를 toggle될 수 있도록 요청한다.
-// - 서버에 메뉴명을 삭제할 수 있도록 요청한다.
+// [V] 웹 서버를 띄운다.
+// [v] 서버에 새로운 메뉴명을 추가될 수 있도록 요청한다.
+// [] 서버에 카테고리별 메뉴리스트를 요청한다.
+// [] 서버에 메뉴명을 수정할 수 있도록 요청한다.
+// [] 서버에 품절상태를 toggle될 수 있도록 요청한다.
+// [] 서버에 메뉴명을 삭제할 수 있도록 요청한다.
 
 // TODO 리팩터링
-// - localStorage에 저장하는 로직을 지운다.
-// - fetch 비동기 api를 사용하는 부분을 async await을 사용하여 구현
+// [v] localStorage에 저장하는 로직을 지운다.
+// [] fetch 비동기 api를 사용하는 부분을 async await을 사용하여 구현
 
 // TODO 사용자 경험
 // - API 통신이 실패하는 경우에 대해 사용자가 알 수 있게 alert으로 예외처리
 // - 중복되는 메뉴는 추가할 수 없다.
+const BASE_URL = 'http://localhost:3000/api'
 
 function App() {
-  // 상태는 변하는 데이터, 이 앱에서 관리해야 하는 것은 무엇인가 - 메뉴명
   this.menu = {
     espresso: [],
     frappuccino: [],
@@ -70,17 +70,30 @@ function App() {
     $(".menu-count").innerText = `총 ${menuCount}개`;
   }
 
-  const addMenuName = () => {
+  const addMenuName = async () => {
     const menuName = $("#menu-name").value;
 
     if (menuName === "") {
       alert("메뉴를 입력하세요.");
       return;
     }
-    this.menu[this.currentCategory].push({ name: menuName });
-    store.setLocalStorage(this.menu);
-    render();
-    $("#menu-name").value = "";
+
+    await fetch(`${BASE_URL}/category/${this.currentCategory}/menu`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ name: menuName })
+    })
+      .then(response => response.json());
+
+    await fetch(`${BASE_URL}/category/${this.currentCategory}/menu`)
+      .then(response => response.json())
+      .then(data => {
+        this.menu[this.currentCategory] = data;
+        render();
+        $("#menu-name").value = "";
+      });
   }
 
   const updateMenuName = (e) => {
