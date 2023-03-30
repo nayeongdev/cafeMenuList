@@ -47,13 +47,12 @@ function App() {
   };
   this.currentCategory = 'espresso';
   this.init = async () => {
-    // console.log(MenuApi.getAllMenuByCategory(this.currentCategory));
-    this.menu[this.currentCategory] = await MenuApi.getAllMenuByCategory(this.currentCategory);
     render();
     initEventListeners();
   }
 
-  const render = () => {
+  const render = async () => {
+    this.menu[this.currentCategory] = await MenuApi.getAllMenuByCategory(this.currentCategory);
     const template = this.menu[this.currentCategory].map((item, index) => {
       return `
           <li data-menu-id="${index}" class="menu-list-item d-flex items-center py-2">
@@ -95,7 +94,6 @@ function App() {
     }
     const menuName = $("#menu-name").value;
     await MenuApi.createMenu(menuName);
-    this.menu[this.currentCategory] = await MenuApi.getAllMenuByCategory(this.currentCategory);
     render();
     $("#menu-name").value = "";
 
