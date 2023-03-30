@@ -22,7 +22,19 @@ const MenuApi = {
   async getAllMenuByCategory(category) {
     const response = await fetch(`${BASE_URL}/category/${category}/menu`)
     return response.json()
-  }
+  },
+  async createMenu(category, name) {
+    const response = await fetch(`${BASE_URL}/category/${category}/menu`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ name })
+    });
+    if (!response.ok) {
+      console.error(response);
+    }
+  },
 }
 
 function App() {
@@ -77,22 +89,12 @@ function App() {
   }
 
   const addMenuName = async () => {
-    const menuName = $("#menu-name").value;
-
     if (menuName === "") {
       alert("메뉴를 입력하세요.");
       return;
     }
-
-    await fetch(`${BASE_URL}/category/${this.currentCategory}/menu`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ name: menuName })
-    })
-      .then(response => response.json());
-
+    const menuName = $("#menu-name").value;
+    await MenuApi.createMenu(menuName);
     this.menu[this.currentCategory] = await MenuApi.getAllMenuByCategory(this.currentCategory);
     render();
     $("#menu-name").value = "";
