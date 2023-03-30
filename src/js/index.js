@@ -4,7 +4,7 @@ import store from "./store/index.js";
 // TODO 서버 요청
 // [V] 웹 서버를 띄운다.
 // [v] 서버에 새로운 메뉴명을 추가될 수 있도록 요청한다.
-// [] 서버에 카테고리별 메뉴리스트를 요청한다.
+// [v] 서버에 카테고리별 메뉴리스트를 요청한다.
 // [] 서버에 메뉴명을 수정할 수 있도록 요청한다.
 // [] 서버에 품절상태를 toggle될 수 있도록 요청한다.
 // [] 서버에 메뉴명을 삭제할 수 있도록 요청한다.
@@ -18,6 +18,13 @@ import store from "./store/index.js";
 // - 중복되는 메뉴는 추가할 수 없다.
 const BASE_URL = 'http://localhost:3000/api'
 
+const MenuApi = {
+  async getAllMenuByCategory(category) {
+    const response = await fetch(`${BASE_URL}/category/${category}/menu`)
+    return response.json()
+  }
+}
+
 function App() {
   this.menu = {
     espresso: [],
@@ -27,10 +34,9 @@ function App() {
     desert: [],
   };
   this.currentCategory = 'espresso';
-  this.init = () => {
-    if (store.getLocalStorage()) {
-      this.menu = store.getLocalStorage();
-    }
+  this.init = async () => {
+    // console.log(MenuApi.getAllMenuByCategory(this.currentCategory));
+    this.menu[this.currentCategory] = await MenuApi.getAllMenuByCategory(this.currentCategory);
     render();
     initEventListeners();
   }
@@ -87,13 +93,10 @@ function App() {
     })
       .then(response => response.json());
 
-    await fetch(`${BASE_URL}/category/${this.currentCategory}/menu`)
-      .then(response => response.json())
-      .then(data => {
-        this.menu[this.currentCategory] = data;
-        render();
-        $("#menu-name").value = "";
-      });
+    this.menu[this.currentCategory] = await MenuApi.getAllMenuByCategory(this.currentCategory);
+    render();
+    $("#menu-name").value = "";
+
   }
 
   const updateMenuName = (e) => {
