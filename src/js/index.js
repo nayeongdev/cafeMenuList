@@ -88,15 +88,14 @@ function App() {
   }
 
   const addMenuName = async () => {
+    const menuName = $("#menu-name").value;
     if (menuName === "") {
       alert("메뉴를 입력하세요.");
       return;
     }
-    const menuName = $("#menu-name").value;
-    await MenuApi.createMenu(menuName);
+    await MenuApi.createMenu(this.currentCategory, menuName);
     render();
     $("#menu-name").value = "";
-
   }
 
   const updateMenuName = (e) => {
