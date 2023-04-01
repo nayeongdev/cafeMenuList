@@ -6,7 +6,7 @@ import store from "./store/index.js";
 // [v] 서버에 새로운 메뉴명을 추가될 수 있도록 요청한다.
 // [v] 서버에 카테고리별 메뉴리스트를 요청한다.
 // [v] 서버에 메뉴명을 수정할 수 있도록 요청한다.
-// [] 서버에 품절상태를 toggle될 수 있도록 요청한다.
+// [v] 서버에 품절상태를 toggle될 수 있도록 요청한다.
 // [] 서버에 메뉴명을 삭제할 수 있도록 요청한다.
 
 // TODO 리팩터링
@@ -47,6 +47,14 @@ const MenuApi = {
       console.error("에러가 발생했습니다.");
     }
   },
+  async toggleSoldOutMenu(category, menuId) {
+    const response = await fetch(`${BASE_URL}/category/${category}/menu/${menuId}/soldout`, {
+      method: "PUT",
+    });
+    if (!response.ok) {
+      console.error("에러가 발생했습니다.");
+    }
+  },
 }
 
 function App() {
@@ -68,7 +76,7 @@ function App() {
     const template = this.menu[this.currentCategory].map((item) => {
       return `
           <li data-menu-id="${item.id}" class="menu-list-item d-flex items-center py-2">
-            <span class="w-100 pl-2 menu-name ${item.soldOut ? "sold-out" : ""}">
+            <span class="w-100 pl-2 menu-name ${item.isSoldOut ? "sold-out" : ""}">
               ${item.name}</span>
             <button
               type="button"
@@ -130,11 +138,9 @@ function App() {
     }
   }
 
-  const soldOutMenu = (e) => {
+  const soldOutMenu = async (e) => {
     const menuId = e.target.closest("li").dataset.menuId;
-    this.menu[this.currentCategory][menuId].soldOut =
-      !this.menu[this.currentCategory][menuId].soldOut;
-    store.setLocalStorage(this.menu);
+    await MenuApi.toggleSoldOutMenu(this.currentCategory, menuId);
     render();
   }
 
