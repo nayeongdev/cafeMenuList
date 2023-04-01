@@ -7,7 +7,7 @@ import store from "./store/index.js";
 // [v] 서버에 카테고리별 메뉴리스트를 요청한다.
 // [v] 서버에 메뉴명을 수정할 수 있도록 요청한다.
 // [v] 서버에 품절상태를 toggle될 수 있도록 요청한다.
-// [] 서버에 메뉴명을 삭제할 수 있도록 요청한다.
+// [v] 서버에 메뉴명을 삭제할 수 있도록 요청한다.
 
 // TODO 리팩터링
 // [v] localStorage에 저장하는 로직을 지운다.
@@ -50,6 +50,14 @@ const MenuApi = {
   async toggleSoldOutMenu(category, menuId) {
     const response = await fetch(`${BASE_URL}/category/${category}/menu/${menuId}/soldout`, {
       method: "PUT",
+    });
+    if (!response.ok) {
+      console.error("에러가 발생했습니다.");
+    }
+  },
+  async deleteMenu(category, menuId) {
+    const response = await fetch(`${BASE_URL}/category/${category}/menu/${menuId}`, {
+      method: "DELETE",
     });
     if (!response.ok) {
       console.error("에러가 발생했습니다.");
@@ -129,11 +137,10 @@ function App() {
     render();
   }
 
-  const removeMenuName = (e) => {
+  const removeMenuName = async (e) => {
     if (confirm("메뉴를 삭제하시겠습니까?")) {
-      const menuId = e.target.closest("li").dataset.menuID;
-      this.menu[this.currentCategory].splice(menuId, 1)
-      store.setLocalStorage(this.menu);
+      const menuId = e.target.closest("li").dataset.menuId;
+      await MenuApi.deleteMenu(this.currentCategory, menuId);
       render();
     }
   }
