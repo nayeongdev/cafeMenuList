@@ -105,6 +105,21 @@ function App() {
     render();
   }
 
+  const changeCategory = (e) => {
+    const isCategroyButton = e.target.classList.contains("cafe-category-name");
+    if (!isCategroyButton) {
+      return
+    }
+    const categoryName = e.target.dataset.categoryName;
+    const categoryBtnName = e.target.innerText.substr(2).trim();
+
+    this.currentCategory = categoryName;
+    $("#category-title").innerText = `${e.target.innerText} 메뉴 관리`;
+    $("label[for='menu-name']").innerText = `${categoryBtnName} 메뉴 이름`;
+    $("#menu-name").placeholder = `${categoryBtnName} 메뉴 이름`;
+    render();
+  }
+
   const initEventListeners = () => {
     $("#menu-list").addEventListener("click", (e) => {
       if (e.target.classList.contains("menu-edit-button")) {
@@ -136,19 +151,7 @@ function App() {
       addMenuName();
     });
 
-    $("nav").addEventListener("click", (e) => {
-      const isCategroyButton = e.target.classList.contains("cafe-category-name");
-      if (isCategroyButton) {
-        const categoryName = e.target.dataset.categoryName;
-        const categoryBtnName = e.target.innerText.substr(2).trim();
-
-        this.currentCategory = categoryName;
-        $("#category-title").innerText = `${e.target.innerText} 메뉴 관리`;
-        $("label[for='menu-name']").innerText = `${categoryBtnName} 메뉴 이름`;
-        $("#menu-name").placeholder = `${categoryBtnName} 메뉴 이름`;
-        render();
-      }
-    });
+    $("nav").addEventListener("click", changeCategory);
   }
 }
 
