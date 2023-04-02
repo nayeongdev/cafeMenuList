@@ -1,5 +1,6 @@
 import { $ } from "./utils/dom.js";
 import store from "./store/index.js";
+import MenuApi from "./api/index.js";
 
 // TODO 서버 요청
 // [V] 웹 서버를 띄운다.
@@ -11,59 +12,12 @@ import store from "./store/index.js";
 
 // TODO 리팩터링
 // [v] localStorage에 저장하는 로직을 지운다.
-// [] fetch 비동기 api를 사용하는 부분을 async await을 사용하여 구현
+// [v] fetch 비동기 api를 사용하는 부분을 async await을 사용하여 구현
+// [v] api 객체를 관리하는 파일 분리
 
 // TODO 사용자 경험
 // - API 통신이 실패하는 경우에 대해 사용자가 알 수 있게 alert으로 예외처리
 // - 중복되는 메뉴는 추가할 수 없다.
-const BASE_URL = 'http://localhost:3000/api'
-
-const MenuApi = {
-  async getAllMenuByCategory(category) {
-    const response = await fetch(`${BASE_URL}/category/${category}/menu`)
-    return response.json()
-  },
-  async createMenu(category, name) {
-    const response = await fetch(`${BASE_URL}/category/${category}/menu`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ name })
-    });
-    if (!response.ok) {
-      console.error("에러가 발생했습니다.");
-    }
-  },
-  async updateMenu(category, name, menuId) {
-    const response = await fetch(`${BASE_URL}/category/${category}/menu/${menuId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ name })
-    });
-    if (!response.ok) {
-      console.error("에러가 발생했습니다.");
-    }
-  },
-  async toggleSoldOutMenu(category, menuId) {
-    const response = await fetch(`${BASE_URL}/category/${category}/menu/${menuId}/soldout`, {
-      method: "PUT",
-    });
-    if (!response.ok) {
-      console.error("에러가 발생했습니다.");
-    }
-  },
-  async deleteMenu(category, menuId) {
-    const response = await fetch(`${BASE_URL}/category/${category}/menu/${menuId}`, {
-      method: "DELETE",
-    });
-    if (!response.ok) {
-      console.error("에러가 발생했습니다.");
-    }
-  },
-}
 
 function App() {
   this.menu = {
