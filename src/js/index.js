@@ -16,7 +16,7 @@ import MenuApi from "./api/index.js";
 // [v] api 객체를 관리하는 파일 분리
 
 // TODO 사용자 경험
-// [] API 통신이 실패하는 경우에 대해 사용자가 알 수 있게 alert으로 예외처리
+// [v] API 통신이 실패하는 경우에 대해 사용자가 알 수 있게 alert으로 예외처리
 // [v] 중복되는 메뉴는 추가할 수 없다.
 
 function App() {
@@ -84,7 +84,7 @@ function App() {
       $("#menu-name").value = "";
       return;
     }
-    
+
     await MenuApi.createMenu(this.currentCategory, menuName);
     render();
     $("#menu-name").value = "";
